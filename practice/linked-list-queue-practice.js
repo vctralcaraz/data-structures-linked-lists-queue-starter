@@ -119,25 +119,71 @@ class SinglyLinkedList {
         if(this.length === 0) return null;
         if(this.length === 1) return this.head;
 
-        let mid = Math.floor(this.length / 2);
-        console.log(mid);
-        console.log(this.findNthNode(mid))
+        let mid = Math.floor((this.length - 1) / 2);
         return this.findNthNode(mid);
             // How do the implementation for singly and doubly vary if at all?
+            /*
+                both implementations should be exactly the same. no difference
+                since they will go from the head to the mid point through
+                iterations
+            */
 
         // Write your hypothesis on the time complexity of this method here
+        /*
+            this one seems to be in a gray area that I don't yet understand
+            because the worst possible case is half of n. So it's not quite
+            O(n). Could it be O(1)?
+        */
     }
 
     reverse() {
         // Returns a new reversed version of the linked list
 
+        const newList = new SinglyLinkedList();
+
+        for(let i = this.length - 1; i >= 0; i--) {
+            newList.addToTail(this.findNthNode(i).value);
+        }
+
+        return newList;
+
         // Write your hypothesis on the time complexity of this method here
+        /*
+            O(n^2) because not only is it iterating through the entire list
+            once, but it is contstantly going through each 'last' node
+            subtracting one through each iteration
+        */
     }
 
     reverseInPlace() {
         // Reverses the linked list in-place
+        const len = this.listLength();
+
+        let index = len - 1;
+        let node1 = this.findNthNode(index);
+
+        while (node1) {
+            this.addToTail(node1.value);
+
+            node1 = this.findNthNode(index - 1);
+            index--;
+        }
+
+        let node2 = this.head;
+
+        for (let i = 0; i < len; i++) {
+            const next = node2.next;
+
+            node2.next = null;
+            this.head = next;
+
+            node2 = next;
+        }
 
         // Write your hypothesis on the time complexity of this method here
+        /*
+            This is O(n^2) because we iterate through the list once
+        */
     }
 }
 
@@ -153,6 +199,7 @@ class DoublyLinkedList {
     constructor() {
         this.head = null;
         this.tail = null;
+        this.length = 0;
     }
 
     addToTail(val) {
@@ -161,12 +208,14 @@ class DoublyLinkedList {
         if (!this.head) {
             this.head = newNode;
             this.tail = newNode;
+            this.length++;
             return this.head;
         }
 
         this.tail.next = newNode;
         newNode.prev = this.tail;
         this.tail = newNode;
+        this.length++;
 
         return this.head;
     }
@@ -174,21 +223,92 @@ class DoublyLinkedList {
     findMid() {
         // Returns the middle node
         // Implement this as a singly linked list then as a doubly linked list
+        if(this.length === 0) return null;
+        if(this.length === 1) return this.head;
+
+        let mid = Math.floor((this.length - 1) / 2);
+
+        let count = 0; 
+
+        let curr = this.head;
+
+        while(curr) {
+            if(count === mid) {
+                return curr;
+            }
+
+            count++;
+            curr = curr.next;
+        }
+
+        return null;
+
             // How do the implementation for singly and doubly vary if at all?
+            /*
+                both implementations should be exactly the same. no difference
+                since they will go from the head to the mid point through
+                iterations
+            */
 
         // Write your hypothesis on the time complexity of this method here
+        /*
+            this one seems to be in a gray area that I don't yet understand
+            because the worst possible case is half of n. So it's not quite
+            O(n). Could it be O(1)?
+        */
     }
 
     reverse() {
         // Returns a new reversed version of the linked list
 
+        let newList = new DoublyLinkedList();
+        let curr = this.tail;
+
+        while(curr) {
+            newList.addToTail(curr.value);
+
+            curr = curr.prev;
+        }
+
+        return newList;
+
         // Write your hypothesis on the time complexity of this method here
+        /*
+            This takes O(n) time complexity due to it having to iterate
+            through the entire list and copy it over to a new list
+        */
     }
 
     reverseInPlace() {
         // Reverses the linked list in-place
+        let len = 0;
+        let node1 = this.tail
+
+        while (node1) {
+            this.addToTail(node1.value);
+            node1 = node1.prev;
+            len++;
+        }
+
+        let node2 = this.head;
+
+        for (let i = 0; i < len; i++) {
+            const next = node2.next;
+
+            node2.prev = null;
+            node2.next = null;
+            this.head = next;
+
+            node2 = next;
+        }
+
+        this.head.prev = null;
+
 
         // Write your hypothesis on the time complexity of this method here
+        /*
+            This is O(n) because we iterate through the list once
+        */
     }
 }
 
